@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 
 
 def show_and_bak(img, dest, wait=1):
@@ -64,17 +65,82 @@ def hist_edge(img):
 
     image, contours, hierarchy = cv2.findContours(canny, cv2.RETR_TREE,
                                                   cv2.CHAIN_APPROX_NONE)
+
+    edge_curvature = cal_edge_curvature(thresh, contours)
+
     thresh_with_contours = cv2.drawContours(thresh, contours,
                                             -1, (127, 255, 127), 3)
 
     show_and_bak(thresh_with_contours, "output/test_9.png")
     show_and_bak(image, "output/test_10.png")
 
-    return hu_moments
+    return hu_moments, edge_curvature
+
+
+def cal_edge_curvature(img, contours):
+    width, height = img.shape
+    r = max(width, height) // 4
+    empty_img = create_empty_image(width, height)
+    circle_img = cv2.circle(empty_img,
+                            (width // 2, height // 2),
+                            r, (255, 255, 255), -1)
+    circle_img = cv2.cvtColor(circle_img, cv2.COLOR_BGR2GRAY)
+
+    S = cv2.countNonZero(circle_img)
+
+    def count_non_zore_in_edge(dot):
+        white_img = create_white_image(width, height)
+
+        x, y = dot[0]
+        mask = cv2.circle(white_img, (x, y), r, (0, 0, 0), -1)
+        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        ret, mask = cv2.threshold(mask, 0, 255,
+                                  cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+
+        img_for_cal = cv2.subtract(img, mask)
+
+        # show_and_bak(img_for_cal, "output/test_11.png")
+
+        return cv2.countNonZero(img_for_cal)
+
+    I = np.array([count_non_zore_in_edge(dot)
+                  for contour in contours for dot in contour])
+
+    c = I / S
+
+    return c
+
+
+
+def create_empty_image(width, height):
+    return np.zeros((width, height, 3), np.uint8)
+
+
+def invert(img):
+    return 255 - img
+
+
+def create_white_image(width, height):
+    empty_img = create_empty_image(width, height)
+    return invert(empty_img)
+
+
+def test(img):
+    width, height, _ = img.shape
+    white_img = create_white_image(width, height)
+    r = max(width, height) // 4
+    cv2.circle(white_img, (width // 2, height // 2), r, 0, -1)
+    show_and_bak(white_img, "output/test_11.png")
+
+
+
+cv2.feature
 
 
 if __name__ == "__main__":
     img = read("f_test.png")
     pre_img = pre(img)
     color_hist = hist_color(img)
-    edge_hist = hist_edge(img)
+    hu_moments, edge_curvature = hist_edge(img)
+
+
