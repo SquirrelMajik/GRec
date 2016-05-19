@@ -19,8 +19,10 @@ from apiresps.errors import (NotFound,
                              MethodNotAllowed,
                              UncaughtException)
 
+from utils.classflier import classflier
 
-__version_info__ = ('0', '0', '1')
+
+__version_info__ = ('0', '1', '0')
 __version__ = '.'.join(__version_info__)
 
 __artisan__ = ['Majik']
@@ -38,6 +40,9 @@ def create_app(config_name='development'):
     app.config.from_object(config[config_name])
     app.json_encoder = Encoder
     app.debug = app.config.get("DEBUG")
+
+    # classflier
+    app.classflier = classflier()
 
     # logging
     if app.config.get("TESTING") is True:

@@ -5,24 +5,21 @@ import android.content.CursorLoader;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.Button;
-import android.widget.ImageView;
+import android.view.View;
 
 import java.io.File;
 import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
-
 
     String savePath = "sdcard/FlowerRec/images/";
     String tempFileName;//临时文件路径
@@ -30,8 +27,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int PHOTO_REQUEST_CAMERA = 1;// 拍照
     private static final int PHOTO_REQUEST_GALLERY = 2;// 从相册中选择
 
-    ImageView image;
-    private Bitmap bitmap;
+    private CardList cards;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,24 +36,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Button but_from_gallery = (Button) findViewById(R.id.but_from_gallery);
-        Button but_take_a_pic = (Button) findViewById(R.id.but_take_a_pic);
-        image = (ImageView) findViewById(R.id.image);
+        cards = (CardList) findViewById(R.id.rec_list);
 
-        if (but_take_a_pic != null) {
-            but_take_a_pic.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab_from_camera);
+
+        if (fab != null) {
+            fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     camera();
-                }
-            });
-        }
-
-        if (but_from_gallery != null) {
-            but_from_gallery.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    gallery();
                 }
             });
         }
@@ -75,15 +62,19 @@ public class MainActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.from_gallery:
+                gallery();
+                break;
+            case R.id.from_camera:
+                camera();
+                break;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     /**
      * 从相册获取
@@ -126,10 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 if (data != null) {
                     // 得到图片的全路径
                     Uri uri = data.getData();
-                    tempPhotoPath = getRealPathFromURI(uri, this);
-                    //根据自己的需求写压缩图片的大小
-                    bitmap= compressImageFromFile(tempPhotoPath, 400f, 400f);
-                    image.setImageBitmap(bitmap);//显示图片
+                    tempPhotoPath = getRealPathFromURI(uri, getBaseContext());
+
+                    cards.addItem(tempPhotoPath);
                 }
 
             } else if (requestCode == PHOTO_REQUEST_CAMERA) {//照相
@@ -141,8 +131,7 @@ public class MainActivity extends AppCompatActivity {
                 tempPhotoPath = savePath + "/" + tempFileName;
                 File file = new File(tempPhotoPath);
                 if(file.isFile()){//判断是否有照相
-                    bitmap= compressImageFromFile(tempPhotoPath,400f,400f);
-                    image.setImageBitmap(bitmap);//显示图片
+                    cards.addItem(tempPhotoPath);
                 }
 
 
@@ -156,7 +145,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * 是否有sd卡
-     * @return
+     * @return bool
      */
     public static boolean hasSdcard() {
         if (Environment.getExternalStorageState().equals(
@@ -182,38 +171,38 @@ public class MainActivity extends AppCompatActivity {
         return cursor.getString(column_index);
     }
 
-    /**
-     * 压缩图片减少内存使用
-     * @param srcPath
-     * @param hh
-     * @param ww
-     * @return
-     */
-    public static Bitmap compressImageFromFile(String srcPath, float hh, float ww) {
-        BitmapFactory.Options newOpts = new BitmapFactory.Options();
-        newOpts.inJustDecodeBounds = true;// 只读边,不读内容
-        Bitmap bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-
-        newOpts.inJustDecodeBounds = false;
-        int w = newOpts.outWidth;
-        int h = newOpts.outHeight;
-        /*float hh = 300f;// 长
-        float ww = 300f;//   高*/
-        int be = 1;
-        if (w > h && w > ww) {
-            be = (int) (newOpts.outWidth / ww);
-        } else if (w < h && h > hh) {
-            be = (int) (newOpts.outHeight / hh);
-        }
-        if (be <= 0)
-            be = 1;
-        newOpts.inSampleSize = be;// 设置采样率
-        newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;// 该模式是默认的,可不设
-        newOpts.inPurgeable = true;// 同时设置才会有效
-        newOpts.inInputShareable = true;// 当系统内存不够时候图片自动被回收
-        bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
-        return bitmap;
-    }
+//    /**
+//     * 压缩图片减少内存使用
+//     * @param srcPath
+//     * @param hh
+//     * @param ww
+//     * @return
+//     */
+//    public static Bitmap compressImageFromFile(String srcPath, float hh, float ww) {
+//        BitmapFactory.Options newOpts = new BitmapFactory.Options();
+//        newOpts.inJustDecodeBounds = true;// 只读边,不读内容
+//        Bitmap bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
+//
+//        newOpts.inJustDecodeBounds = false;
+//        int w = newOpts.outWidth;
+//        int h = newOpts.outHeight;
+//        /*float hh = 300f;// 长
+//        float ww = 300f;//   高*/
+//        int be = 1;
+//        if (w > h && w > ww) {
+//            be = (int) (newOpts.outWidth / ww);
+//        } else if (w < h && h > hh) {
+//            be = (int) (newOpts.outHeight / hh);
+//        }
+//        if (be <= 0)
+//            be = 1;
+//        newOpts.inSampleSize = be;// 设置采样率
+//        newOpts.inPreferredConfig = Bitmap.Config.ARGB_8888;// 该模式是默认的,可不设
+//        newOpts.inPurgeable = true;// 同时设置才会有效
+//        newOpts.inInputShareable = true;// 当系统内存不够时候图片自动被回收
+//        bitmap = BitmapFactory.decodeFile(srcPath, newOpts);
+//        return bitmap;
+//    }
 
     /** 回收Bitmap的空间。 */
     public void recyleBitmap(Bitmap bitmap) {

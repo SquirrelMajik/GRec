@@ -3,7 +3,6 @@ from __future__ import absolute_import
 
 from datetime import datetime
 import json
-from bson import ObjectId
 
 
 class Encoder(json.JSONEncoder):
@@ -18,6 +17,4 @@ class Encoder(json.JSONEncoder):
     def default(self, obj):
         if isinstance(obj, datetime):
             return obj.isoformat()
-        elif isinstance(obj, ObjectId):
-            return str(obj)
         return obj

@@ -3,7 +3,6 @@ from __future__ import absolute_import
 
 from flask import current_app, request, make_response, json
 from functools import wraps
-from mongokit import Cursor
 
 from apiresps import APIResponse, APIError, STATUS_OK
 from apiresps.errors import ResponseInstanceTypeError
@@ -11,8 +10,6 @@ from apiresps.errors import ResponseInstanceTypeError
 
 def _content_data(rv):
     """The rv can be converted into a JSON-encoded data type"""
-    if isinstance(rv, Cursor):
-        return list(rv)
     return rv
 
 

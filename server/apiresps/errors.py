@@ -1,20 +1,20 @@
 # coding=utf-8
 from __future__ import absolute_import
 
-import httplib
+import http
 from .base import APIError
 
 
 # not found
 class NotFound(APIError):
-    status_code = httplib.NOT_FOUND
+    status_code = http.client.NOT_FOUND
     status_message = 'RESOURCE_NOT_FOUND'
     response_code = 100000
 
 
 # forbidden
 class PermissionDenied(APIError):
-    status_code = httplib.FORBIDDEN
+    status_code = http.client.FORBIDDEN
     status_message = 'FORBIDDEN'
     response_code = 101000
 
@@ -26,21 +26,21 @@ class PermissionExpired(PermissionDenied):
 
 # unauthorized
 class AuthFailed(APIError):
-    status_code = httplib.UNAUTHORIZED
+    status_code = http.client.UNAUTHORIZED
     status_message = 'AUTHENTICATION_FAILED'
     response_code = 102000
 
 
 # not allow
 class MethodNotAllowed(APIError):
-    status_code = httplib.METHOD_NOT_ALLOWED
+    status_code = http.client.METHOD_NOT_ALLOWED
     status_message = 'REQUEST_METHOD_NOT_ALLOWED'
     response_code = 103000
 
 
 # bad request
 class BadRequest(APIError):
-    status_code = httplib.BAD_REQUEST
+    status_code = http.client.BAD_REQUEST
     status_message = 'BAD_REQUEST'
     response_code = 104000
 
@@ -67,7 +67,7 @@ class RequestBlocked(BadRequest):
 
 # internal server error
 class InternalServerError(APIError):
-    status_code = httplib.INTERNAL_SERVER_ERROR
+    status_code = http.client.INTERNAL_SERVER_ERROR
     response_code = 105000
     status_message = "INTERNAL_SERVER_ERROR"
 
@@ -89,14 +89,14 @@ class MongoDBError(InternalServerError):
 
 # conflict
 class ConflictError(APIError):
-    status_code = httplib.CONFLICT
+    status_code = http.client.CONFLICT
     status_message = 'CONFLICT_ERROR'
     response_code = 106000
 
 
 # unexpection
 class Unexpected(APIError):
-    status_code = httplib.EXPECTATION_FAILED
+    status_code = http.client.EXPECTATION_FAILED
     status_message = 'UNEXPECTED'
     response_code = 107000
 

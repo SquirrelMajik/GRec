@@ -60,3 +60,10 @@ target/
 
 #Ipython Notebook
 .ipynb_checkpoints
+
+cv/feature
+cv/output
+cv/images
+test/images
+server/temp
+android/.*

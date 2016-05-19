@@ -212,13 +212,3 @@ def get_features(image_path, hbins=15, sbins=10, cbins=15):
     glcm = texture_feature(gray)
 
     return color, hu, curvature, glcm
-
-
-if __name__ == '__main__':
-    blur, gray, binary = load_image("f_test_bak.png")
-
-    io.imsave("output/new_test_1.png", blur)
-
-    io.imsave("output/new_test_2.png", gray)
-
-    io.imsave("output/new_test_3.png", np.where(binary, 0, 255))

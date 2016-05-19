@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">Flower Rec</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_media">MediaActivity</string>
+    <string name="from_camera">From Camera</string>
+    <string name="from_gallery">From Gallery</string>
+    <string name="title_activity_main2">Main2Activity</string>
 </resources>

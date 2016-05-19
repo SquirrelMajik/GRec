@@ -4,11 +4,11 @@ from __future__ import absolute_import
 from functools import partial
 from werkzeug.datastructures import ImmutableDict
 from werkzeug.utils import secure_filename
-from bson import ObjectId
+# from bson import ObjectId
 import re
 import time
 import urllib
-import urlparse
+from urllib.parse import urlparse
 import hashlib
 import mimetypes
 
@@ -211,8 +211,8 @@ def version_list_to_str(list_version):
     return version
 
 
-def is_ObjectId(_id):
-    return _id and ObjectId.is_valid(_id)
+# def is_ObjectId(_id):
+#     return _id and ObjectId.is_valid(_id)
 
 
 def safe_filename(filename, mimetype=None):

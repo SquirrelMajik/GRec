@@ -1,8 +1,7 @@
 #coding=utf-8
 from __future__ import absolute_import
 
-
-import httplib
+import http
 
 
 class Meta(type):
@@ -18,7 +17,7 @@ class APIError(Exception):
     Subclasses should provide `.code` and `message` properties.
     """
     __metaclass__ = Meta
-    status_code = httplib.INTERNAL_SERVER_ERROR
+    status_code = http.client.INTERNAL_SERVER_ERROR
     response_code = 0
     status_message = 'error'
     affix_message = None

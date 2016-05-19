@@ -111,7 +111,6 @@ def cal_edge_curvature(img, contours):
     return c
 
 
-
 def create_empty_image(width, height):
     return np.zeros((width, height, 3), np.uint8)
 
@@ -133,14 +132,8 @@ def test(img):
     show_and_bak(white_img, "output/test_11.png")
 
 
-
-cv2.feature
-
-
 if __name__ == "__main__":
     img = read("f_test.png")
     pre_img = pre(img)
     color_hist = hist_color(img)
     hu_moments, edge_curvature = hist_edge(img)
-
-
